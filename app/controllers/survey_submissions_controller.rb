@@ -12,15 +12,12 @@ class SurveySubmissionsController < ApplicationController
   end
 
   def create
-    @survey = Survey.find(survey_submission_params[:survey_id])
-    @survey_submission = @survey.survey_submissions.build(survey_submission_params)
+    @survey_submission = SurveySubmission.new(survey_submission_params)
 
     if @survey_submission.save
       redirect_to @survey_submission, notice: 'Survey submission was successfully created.'
     else
-      @survey.questions.each do |q|
-        @survey_submission.answers.build(question: q) unless @survey_submission.answers.any? { |a| a.question_id == q.id }
-      end
+      @survey = @survey_submission.survey
       render :new, status: :unprocessable_content
     end
   end
