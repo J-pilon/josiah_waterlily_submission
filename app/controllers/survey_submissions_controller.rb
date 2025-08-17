@@ -21,7 +21,7 @@ class SurveySubmissionsController < ApplicationController
       @survey.questions.each do |q|
         @survey_submission.answers.build(question: q) unless @survey_submission.answers.any? { |a| a.question_id == q.id }
       end
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
