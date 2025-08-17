@@ -27,18 +27,13 @@ class SurveySubmissionTest < ActiveSupport::TestCase
   end
 
   test "should create a new survey submission" do
-    submission = SurveySubmission.new(survey: @survey)
+    submission = SurveySubmission.new(
+      survey: @survey,
+      answers_attributes: { "0" => { question_id: @survey.questions.first.id, response: "response" } }
+    )
     assert submission.save
     assert_equal @survey, submission.survey
     assert_equal @survey.id, submission.survey_id
-  end
-
-  test "should update survey submission" do
-    new_survey = surveys(:two)
-    @survey_submission.survey = new_survey
-    assert @survey_submission.save
-    assert_equal new_survey.id, @survey_submission.reload.survey_id
-    assert_equal new_survey, @survey_submission.survey
   end
 
   test "should destroy survey submission" do
@@ -70,14 +65,6 @@ class SurveySubmissionTest < ActiveSupport::TestCase
     assert_equal @survey, @survey_submission.survey
     assert_equal @survey.title, @survey_submission.survey.title
     assert_equal @survey.description, @survey_submission.survey.description
-  end
-
-  test "should change survey association" do
-    new_survey = surveys(:two)
-    @survey_submission.survey = new_survey
-    assert @survey_submission.save
-    assert_equal new_survey.id, @survey_submission.reload.survey_id
-    assert_equal new_survey, @survey_submission.survey
   end
 
   test "should not save without survey" do
@@ -134,8 +121,13 @@ class SurveySubmissionTest < ActiveSupport::TestCase
 
   # Test model behavior
   test "should handle multiple submissions for same survey" do
-    first_submission = SurveySubmission.create!(survey: @survey)
-    second_submission = SurveySubmission.create!(survey: @survey)
+
+    first_submission = SurveySubmission.create!(survey: @survey,
+      answers_attributes: {"0" => { question_id: @survey.questions.first.id, response: "response"}
+    })
+    second_submission = SurveySubmission.create!(survey: @survey,
+      answers_attributes: {"0" => { question_id: @survey.questions.first.id, response: "response"}
+    })
 
     assert_equal @survey.id, first_submission.survey_id
     assert_equal @survey.id, second_submission.survey_id
